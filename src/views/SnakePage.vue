@@ -16,7 +16,7 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
   import SnakeView from '@/components/SnakeView.vue';
-  import SnakeModel from '@/Game/SnakeModel';
+  import SnakeModel from '@/game/SnakeModel';
 
   @Component({
     components: {SnakeView},

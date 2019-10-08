@@ -33,7 +33,7 @@
 
 <script lang="ts">
   import {Component, Prop, Vue} from 'vue-property-decorator';
-  import SnakeModel, {SnakeUnit} from '@/Game/SnakeModel';
+  import SnakeModel, {SnakeUnit} from '@/game/SnakeModel';
 
   @Component({})
   export default class SnakeView extends Vue {
