@@ -21,7 +21,7 @@
 
         <transition-group tag="g" name="list" appear>
             <rect v-for="(unit, index) in units"
-                  :key="unit.x + unit.y + index"
+                  :key="`x${unit.x}/y${unit.y}`"
                   :x="unit.x"
                   :y="unit.y"
                   :stroke="`hsl(${hueValue}, 90%, 20%)`"

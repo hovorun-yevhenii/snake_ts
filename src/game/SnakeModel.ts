@@ -4,10 +4,11 @@ import {SnakeUnit, SnakeOptions} from '@/game/types';
 export default class SnakeModel {
   public units: SnakeUnit[] = [];
   public dimension: number = 2;
-  public direction: string = 'right';
+  public snakeDirection: string = 'right';
+  public userDirection: string = 'right';
   public unitSize!: number;
   public loop: Loop = new Loop({
-    interval: 300,
+    interval: 200,
     callback: this.main.bind(this),
   });
 
@@ -23,7 +24,13 @@ export default class SnakeModel {
   }
 
   public makeStep(initial?: boolean): void {
-    this.units.push(this.makeNewUnit);
+    const newUnit: SnakeUnit = this.makeNewUnit;
+    const intersection: boolean = this.getIntersection(newUnit);
+    this.units.push(newUnit);
+
+    if (intersection) {
+      this.reset();
+    }
 
     if (!initial) {
       this.units.shift();
@@ -32,6 +39,18 @@ export default class SnakeModel {
 
   public main(): void {
     this.makeStep();
+  }
+
+  public reset(): void {
+    this.snakeDirection = 'right';
+    this.userDirection = 'right';
+    this.loop.toggleLoop();
+    this.units = [];
+    this.pushInitialUnits();
+  }
+
+  public getIntersection(newUnit: SnakeUnit): boolean {
+    return this.units.some((unit: SnakeUnit) => newUnit.x === unit.x && newUnit.y === unit.y);
   }
 
   get getHead(): SnakeUnit {
@@ -45,7 +64,9 @@ export default class SnakeModel {
     let x: number = 0;
     let y: number = 0;
 
-    switch (this.direction) {
+    this.snakeDirection = this.userDirection;
+
+    switch (this.snakeDirection) {
       case 'right':
         x = this.unitSize;
         break;
@@ -62,7 +83,7 @@ export default class SnakeModel {
 
     return {
       x: normalize(x + head.x),
-      y: normalize(y += head.y),
+      y: normalize(y + head.y),
     };
   }
 
@@ -70,22 +91,22 @@ export default class SnakeModel {
     document.addEventListener('keydown', ({code}) => {
       switch (true) {
         case code === 'Space':
-          this.loop.start.call(this.loop);
+          this.loop.toggleLoop();
           break;
-        case code === 'ArrowRight' && this.direction !== 'left':
-          this.direction = 'right';
+        case !this.loop.frame:
+          return;
+        case code === 'ArrowRight' && this.snakeDirection !== 'left':
+          this.userDirection = 'right';
           break;
-        case code === 'ArrowLeft' && this.direction !== 'right':
-          this.direction = 'left';
+        case code === 'ArrowLeft' && this.snakeDirection !== 'right':
+          this.userDirection = 'left';
           break;
-        case code === 'ArrowUp' && this.direction !== 'down':
-          this.direction = 'up';
+        case code === 'ArrowUp' && this.snakeDirection !== 'down':
+          this.userDirection = 'up';
           break;
-        case code === 'ArrowDown' && this.direction !== 'up':
-          this.direction = 'down';
+        case code === 'ArrowDown' && this.snakeDirection !== 'up':
+          this.userDirection = 'down';
           break;
-        default:
-          return false;
       }
     });
   }
