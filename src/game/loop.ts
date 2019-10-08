@@ -13,7 +13,6 @@ export default class Loop {
   constructor(options: LoopOptions) {
     this.callback = options.callback;
     this.delay = options.interval;
-    this.start();
   }
 
   public loop(time: any) {

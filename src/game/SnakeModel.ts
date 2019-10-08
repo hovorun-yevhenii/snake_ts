@@ -1,19 +1,5 @@
-import Loop from './Loop';
-
-export interface SnakeUnit {
-  readonly id?: number;
-  x: number;
-  y: number;
-}
-
-export interface SnakeOptions {
-  dimension: number;
-}
-
-export interface CoordsIncrement {
-  xIncrement: number;
-  yIncrement: number;
-}
+import Loop from '@/game/loop';
+import {SnakeUnit, SnakeOptions} from '@/game/types';
 
 export default class SnakeModel {
   public units: SnakeUnit[] = [];
@@ -28,12 +14,56 @@ export default class SnakeModel {
   constructor(options: SnakeOptions) {
     this.dimension = options.dimension;
     this.unitSize = Math.round(1000 / this.dimension);
-    this.pushInitUnits();
+    this.pushInitialUnits();
     this.addEventListener();
   }
 
-  public pushInitUnits(): void {
-    Array(5).fill('').forEach(() => this.makeStep(true));
+  public pushInitialUnits(): void {
+    Array(10).fill('').forEach(() => this.makeStep(true));
+  }
+
+  public makeStep(initial?: boolean): void {
+    this.units.push(this.makeNewUnit);
+
+    if (!initial) {
+      this.units.shift();
+    }
+  }
+
+  public main(): void {
+    this.makeStep();
+  }
+
+  get getHead(): SnakeUnit {
+    return this.units[this.units.length - 1] || {x: this.unitSize, y: this.unitSize};
+  }
+
+  get makeNewUnit(): SnakeUnit {
+    const head: SnakeUnit = this.getHead;
+    const limit = 1000 - this.unitSize;
+    const normalize = (n: number) => n > limit ? 1000 - n : n < 0 ? 1000 + n : n;
+    let x: number = 0;
+    let y: number = 0;
+
+    switch (this.direction) {
+      case 'right':
+        x = this.unitSize;
+        break;
+      case 'left':
+        x = -this.unitSize;
+        break;
+      case 'up':
+        y = -this.unitSize;
+        break;
+      case 'down':
+        y = this.unitSize;
+        break;
+    }
+
+    return {
+      x: normalize(x + head.x),
+      y: normalize(y += head.y),
+    };
   }
 
   public addEventListener(): void {
@@ -58,50 +88,5 @@ export default class SnakeModel {
           return false;
       }
     });
-  }
-
-  public makeStep(initial?: boolean): void {
-    const head: SnakeUnit = this.getHead;
-    const {xIncrement, yIncrement} = this.getCoordsIncrements;
-    const x: number = Math.round(head.x + xIncrement);
-    const y: number = Math.round(head.y + yIncrement);
-    this.units.push({x, y});
-
-    if (!initial) {
-      this.units.shift();
-    }
-  }
-
-  public main(): void {
-    this.makeStep();
-  }
-
-  get getHead(): SnakeUnit {
-    return this.units[this.units.length - 1] || {x: this.unitSize, y: this.unitSize};
-  }
-
-  get getCoordsIncrements(): CoordsIncrement {
-    let x: number = 0;
-    let y: number = 0;
-
-    switch (this.direction) {
-      case 'right':
-        x = this.unitSize;
-        break;
-      case 'left':
-        x = -this.unitSize;
-        break;
-      case 'up':
-        y = -this.unitSize;
-        break;
-      case 'down':
-        y = this.unitSize;
-        break;
-    }
-
-    return {
-      xIncrement: x,
-      yIncrement: y,
-    };
   }
 }

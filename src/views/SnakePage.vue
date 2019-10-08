@@ -22,7 +22,7 @@
     components: {SnakeView},
   })
   export default class Game extends Vue {
-    public dimension: number = 30;
+    public dimension: number = 20;
     public hueValue: number = 100;
     public snake: SnakeModel = new SnakeModel({
       dimension: this.dimension,
