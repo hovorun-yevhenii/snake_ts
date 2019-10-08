@@ -35,14 +35,14 @@
 <script lang="ts">
   import {Component, Prop, Vue} from 'vue-property-decorator';
   import SnakeModel from '@/game/SnakeModel';
-  import {SnakeUnit} from '@/game/types';
+  import {Coords} from '@/game/types';
 
   @Component({})
   export default class SnakeView extends Vue {
     @Prop({default: {}}) public snake!: SnakeModel;
     @Prop({default: 90}) public hueValue!: number;
 
-    public get units(): SnakeUnit[] {
+    public get units(): Coords[] {
       return this.snake.units;
     }
 

@@ -1,8 +1,8 @@
 import Loop from '@/game/loop';
-import {SnakeUnit, SnakeOptions} from '@/game/types';
+import {Coords, SnakeOptions} from '@/game/types';
 
 export default class SnakeModel {
-  public units: SnakeUnit[] = [];
+  public units: Coords[] = [];
   public dimension: number = 2;
   public snakeDirection: string = 'right';
   public userDirection: string = 'right';
@@ -14,7 +14,7 @@ export default class SnakeModel {
 
   constructor(options: SnakeOptions) {
     this.dimension = options.dimension;
-    this.unitSize = Math.round(1000 / this.dimension);
+    this.unitSize = 1000 / this.dimension;
     this.pushInitialUnits();
     this.addEventListener();
   }
@@ -24,8 +24,8 @@ export default class SnakeModel {
   }
 
   public makeStep(initial?: boolean): void {
-    const newUnit: SnakeUnit = this.makeNewUnit;
-    const intersection: boolean = this.getIntersection(newUnit);
+    const newUnit: Coords = this.makeNewUnit;
+    const intersection: boolean = this.getAnyIntersection(newUnit);
     this.units.push(newUnit);
 
     if (intersection) {
@@ -49,16 +49,28 @@ export default class SnakeModel {
     this.pushInitialUnits();
   }
 
-  public getIntersection(newUnit: SnakeUnit): boolean {
-    return this.units.some((unit: SnakeUnit) => newUnit.x === unit.x && newUnit.y === unit.y);
+  public getAnyIntersection(coords: Coords): boolean {
+    this.makeRabbit();
+    return this.units.some((unit: Coords) => coords.x === unit.x && coords.y === unit.y);
   }
 
-  get getHead(): SnakeUnit {
+  public getHeadIntersection(coords: Coords): boolean {
+    const {x, y} = this.getHead;
+
+    return x === coords.x && y === coords.y;
+  }
+
+  public makeRabbit(): Coords {
+    // TODO
+    return {x: 0, y: 0};
+  }
+
+  get getHead(): Coords {
     return this.units[this.units.length - 1] || {x: this.unitSize, y: this.unitSize};
   }
 
-  get makeNewUnit(): SnakeUnit {
-    const head: SnakeUnit = this.getHead;
+  get makeNewUnit(): Coords {
+    const head: Coords = this.getHead;
     const limit = 1000 - this.unitSize;
     const normalize = (n: number) => n > limit ? 1000 - n : n < 0 ? 1000 + n : n;
     let x: number = 0;
