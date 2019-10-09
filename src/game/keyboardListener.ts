@@ -1,6 +1,6 @@
-import SnakeModel from '@/game/SnakeModel';
+import Index from '@/game/index';
 
-export function keyboardListener(this: SnakeModel, {code}: {code: string}) {
+export function keyboardListener(this: Index, {code}: {code: string}) {
     switch (true) {
       case ['KeyP', 'Space'].includes(code):
         this.loop.toggleLoop();

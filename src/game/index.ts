@@ -2,11 +2,13 @@ import Loop from '@/game/loop';
 import {Coords} from '@/game/types';
 import {keyboardListener} from '@/game/keyboardListener';
 
-export default class SnakeModel {
+export default class Snake {
   public MAX_CALL_PER_CYCLE: number = 15999;
   public FIELD_SIZE: number = 1000;
   public DIMENSION: number = 20;
-  public tempo: number = 100;
+  public INITIAL_TEMPO: number = 100;
+
+  public tempo!: number;
   public units: Coords[] = [];
   public carrot: Coords = {x: 0, y: 0};
   public snakeDirection: string = 'right';
@@ -17,7 +19,7 @@ export default class SnakeModel {
   constructor() {
     this.unitSize = this.FIELD_SIZE / this.DIMENSION;
     this.pushInitialUnits();
-    this.loop.seInterval = this.tempo;
+    this.tempo = this.INITIAL_TEMPO;
     document.addEventListener('keydown', keyboardListener.bind(this));
   }
 
@@ -27,7 +29,7 @@ export default class SnakeModel {
 
   public pushInitialUnits(): void {
     this.units = [];
-    Array(10).fill('').forEach(() => this.makeStep(true));
+    Array(2).fill('').forEach(() => this.makeStep(true));
   }
 
   public makeStep(initial?: boolean): void {
@@ -62,9 +64,7 @@ export default class SnakeModel {
   }
 
   public getHeadIntersection(coords: Coords): boolean {
-    const {x, y} = this.getHead;
-
-    return x === coords.x && y === coords.y;
+    return this.getHead.x === coords.x && this.getHead.y === coords.y;
   }
 
   public addCarrot(): void {
@@ -90,6 +90,11 @@ export default class SnakeModel {
 
     this.carrot.x = x;
     this.carrot.y = y;
+  }
+
+  set setTempo(value: number) {
+    this.tempo = value;
+    this.loop.setInterval = this.tempo;
   }
 
   get getRandomOffset(): number {

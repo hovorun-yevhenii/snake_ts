@@ -2,7 +2,7 @@ export default class Loop {
   public frame: number | void = 0;
   private lastTime: number = performance.now();
   private readonly callback: () => void;
-  private interval: number = 1000;
+  private interval: number = 100;
 
   constructor(callback: () => void) {
     this.callback = callback;
@@ -16,7 +16,7 @@ export default class Loop {
     }
   }
 
-  public set seInterval(value: number) {
+  public set setInterval(value: number) {
     this.interval = value;
   }
 

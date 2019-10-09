@@ -4,7 +4,10 @@
             <router-link class="icon-link" to="/">
                 <i class="fas fa-arrow-circle-left"></i>
             </router-link>
+
+            {{snake.units.length}}
             <input type="range" min="0" max="360" step="1" v-model="hueValue"/>
+            <input type="range" min="0" max="400" step="1" value="150" @change="setSnakeTempo"/>
         </header>
 
         <main>
@@ -16,14 +19,18 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
   import SnakeView from '@/components/SnakeView.vue';
-  import SnakeModel from '@/game/SnakeModel';
+  import Snake from '@/game';
 
   @Component({
     components: {SnakeView},
   })
-  export default class Game extends Vue {
-    protected hueValue: number = 20;
-    protected snake: SnakeModel = new SnakeModel();
+  export default class SnakePage extends Vue {
+    public hueValue: number = 130;
+    protected snake: Snake = new Snake();
+
+    public setSnakeTempo(ev: any) {
+      this.snake.setTempo = ev.target.value;
+    }
   }
 </script>
 

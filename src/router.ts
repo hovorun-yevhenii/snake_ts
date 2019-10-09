@@ -16,7 +16,7 @@ export default new Router({
     {
       path: '/game',
       name: 'game',
-      component: () => import(/* webpackChunkName: "about" */ './views/SnakePage.vue'),
+      component: () => import(/* webpackChunkName: "SnakePage" */ './views/SnakePage.vue'),
     },
   ],
 });
