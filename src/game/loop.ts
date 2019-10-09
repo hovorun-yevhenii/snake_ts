@@ -1,17 +1,11 @@
-export interface LoopOptions {
-  interval: number;
-  callback: () => void;
-}
-
 export default class Loop {
   public frame: number | void = 0;
   private lastTime: number = performance.now();
   private readonly callback: () => void;
-  private readonly interval: number;
+  private interval: number = 1000;
 
-  constructor(options: LoopOptions) {
-    this.callback = options.callback;
-    this.interval = options.interval;
+  constructor(callback: () => void) {
+    this.callback = callback;
   }
 
   public toggleLoop(): void {
@@ -20,6 +14,10 @@ export default class Loop {
     } else {
       this.frame = requestAnimationFrame(this.loop.bind(this));
     }
+  }
+
+  public set seInterval(value: number) {
+    this.interval = value;
   }
 
   private loop() {

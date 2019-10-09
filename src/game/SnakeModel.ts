@@ -1,24 +1,28 @@
 import Loop from '@/game/loop';
 import {Coords} from '@/game/types';
+import {keyboardListener} from '@/game/keyboardListener';
 
 export default class SnakeModel {
   public MAX_CALL_PER_CYCLE: number = 15999;
   public FIELD_SIZE: number = 1000;
   public DIMENSION: number = 20;
+  public tempo: number = 100;
   public units: Coords[] = [];
   public carrot: Coords = {x: 0, y: 0};
   public snakeDirection: string = 'right';
   public userDirection: string = 'right';
   public unitSize: number = this.FIELD_SIZE / this.DIMENSION;
-  public loop: Loop = new Loop({
-    interval: 150,
-    callback: this.main.bind(this),
-  });
+  public loop: Loop = new Loop(this.main.bind(this));
 
   constructor() {
     this.unitSize = this.FIELD_SIZE / this.DIMENSION;
     this.pushInitialUnits();
-    this.addEventListener();
+    this.loop.seInterval = this.tempo;
+    document.addEventListener('keydown', keyboardListener.bind(this));
+  }
+
+  public main(): void {
+    this.makeStep();
   }
 
   public pushInitialUnits(): void {
@@ -33,6 +37,8 @@ export default class SnakeModel {
 
     if (selfIntersection) {
       this.reset();
+    } else {
+      this.units.push(newHead);
     }
 
     if (!initial && !carrotIntersection) {
@@ -42,19 +48,13 @@ export default class SnakeModel {
     if (carrotIntersection) {
       this.addCarrot();
     }
-
-    this.units.push(newHead);
-  }
-
-  public main(): void {
-    this.makeStep();
   }
 
   public reset(): void {
     this.snakeDirection = 'right';
     this.userDirection = 'right';
-    this.loop.toggleLoop();
     this.pushInitialUnits();
+    this.loop.toggleLoop();
   }
 
   public getAnyIntersection(coords: Coords): boolean {
@@ -128,31 +128,5 @@ export default class SnakeModel {
       x: normalize(x + head.x),
       y: normalize(y + head.y),
     };
-  }
-
-  public addEventListener(): void {
-    document.addEventListener('keydown', ({code}) => {
-      const dir: string = this.snakeDirection;
-
-      switch (true) {
-        case ['KeyP', 'Space'].includes(code):
-          this.loop.toggleLoop();
-          break;
-        case !this.loop.frame:
-          return;
-        case dir !== 'left' && ['KeyD', 'ArrowRight'].includes(code):
-          this.userDirection = 'right';
-          break;
-        case dir !== 'right' && ['KeyA', 'ArrowLeft'].includes(code):
-          this.userDirection = 'left';
-          break;
-        case dir !== 'down' && ['KeyW', 'ArrowUp'].includes(code):
-          this.userDirection = 'up';
-          break;
-        case dir !== 'up' && ['KeyS', 'ArrowDown'].includes(code):
-          this.userDirection = 'down';
-          break;
-      }
-    });
   }
 }
