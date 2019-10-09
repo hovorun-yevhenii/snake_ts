@@ -1,20 +1,22 @@
 import Loop from '@/game/loop';
-import {Coords, SnakeOptions} from '@/game/types';
+import {Coords} from '@/game/types';
 
 export default class SnakeModel {
+  public MAX_CALL_PER_CYCLE: number = 15999;
+  public FIELD_SIZE: number = 1000;
+  public DIMENSION: number = 20;
   public units: Coords[] = [];
-  public dimension: number = 2;
+  public carrot: Coords = {x: 0, y: 0};
   public snakeDirection: string = 'right';
   public userDirection: string = 'right';
-  public unitSize!: number;
+  public unitSize: number = this.FIELD_SIZE / this.DIMENSION;
   public loop: Loop = new Loop({
-    interval: 200,
+    interval: 150,
     callback: this.main.bind(this),
   });
 
-  constructor(options: SnakeOptions) {
-    this.dimension = options.dimension;
-    this.unitSize = 1000 / this.dimension;
+  constructor() {
+    this.unitSize = this.FIELD_SIZE / this.DIMENSION;
     this.pushInitialUnits();
     this.addEventListener();
   }
@@ -25,17 +27,23 @@ export default class SnakeModel {
   }
 
   public makeStep(initial?: boolean): void {
-    const newUnit: Coords = this.makeNewUnit;
-    const intersection: boolean = this.getAnyIntersection(newUnit);
-    this.units.push(newUnit);
+    const newHead: Coords = this.makeNewUnit;
+    const selfIntersection: boolean = this.getAnyIntersection(newHead);
+    const carrotIntersection: boolean = this.getHeadIntersection(this.carrot);
 
-    if (intersection) {
+    if (selfIntersection) {
       this.reset();
     }
 
-    if (!initial) {
+    if (!initial && !carrotIntersection) {
       this.units.shift();
     }
+
+    if (carrotIntersection) {
+      this.addCarrot();
+    }
+
+    this.units.push(newHead);
   }
 
   public main(): void {
@@ -50,7 +58,6 @@ export default class SnakeModel {
   }
 
   public getAnyIntersection(coords: Coords): boolean {
-    this.makeRabbit();
     return this.units.some((unit: Coords) => coords.x === unit.x && coords.y === unit.y);
   }
 
@@ -60,9 +67,33 @@ export default class SnakeModel {
     return x === coords.x && y === coords.y;
   }
 
-  public makeRabbit(): Coords {
-    // TODO
-    return {x: 0, y: 0};
+  public addCarrot(): void {
+    let x!: number;
+    let y!: number;
+    let intersection: boolean = true;
+    let tries: number = 0;
+
+    while (intersection) {
+      x = this.unitSize * this.getRandomOffset;
+      y = this.unitSize * this.getRandomOffset;
+      intersection = this.getAnyIntersection({x, y});
+
+      tries++;
+
+      if (tries > this.MAX_CALL_PER_CYCLE) {
+        x = -this.unitSize * 2;
+        y = -this.unitSize * 2;
+        setTimeout(() => this.addCarrot(), 0);
+        break;
+      }
+    }
+
+    this.carrot.x = x;
+    this.carrot.y = y;
+  }
+
+  get getRandomOffset(): number {
+    return Math.round(Math.random() * (this.DIMENSION - 1));
   }
 
   get getHead(): Coords {
@@ -71,8 +102,8 @@ export default class SnakeModel {
 
   get makeNewUnit(): Coords {
     const head: Coords = this.getHead;
-    const limit = 1000 - this.unitSize;
-    const normalize = (n: number) => n > limit ? 1000 - n : n < 0 ? 1000 + n : n;
+    const limit = this.FIELD_SIZE - this.unitSize;
+    const normalize = (n: number) => n > limit ? this.FIELD_SIZE - n : n < 0 ? this.FIELD_SIZE + n : n;
     let x: number = 0;
     let y: number = 0;
 
@@ -101,22 +132,24 @@ export default class SnakeModel {
 
   public addEventListener(): void {
     document.addEventListener('keydown', ({code}) => {
+      const dir: string = this.snakeDirection;
+
       switch (true) {
-        case code === 'Space':
+        case ['KeyP', 'Space'].includes(code):
           this.loop.toggleLoop();
           break;
         case !this.loop.frame:
           return;
-        case code === 'ArrowRight' && this.snakeDirection !== 'left':
+        case dir !== 'left' && ['KeyD', 'ArrowRight'].includes(code):
           this.userDirection = 'right';
           break;
-        case code === 'ArrowLeft' && this.snakeDirection !== 'right':
+        case dir !== 'right' && ['KeyA', 'ArrowLeft'].includes(code):
           this.userDirection = 'left';
           break;
-        case code === 'ArrowUp' && this.snakeDirection !== 'down':
+        case dir !== 'down' && ['KeyW', 'ArrowUp'].includes(code):
           this.userDirection = 'up';
           break;
-        case code === 'ArrowDown' && this.snakeDirection !== 'up':
+        case dir !== 'up' && ['KeyS', 'ArrowDown'].includes(code):
           this.userDirection = 'down';
           break;
       }
