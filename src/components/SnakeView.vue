@@ -150,7 +150,7 @@
       return Array(length)
         .fill(35)
         .map((value: number, index: number) => value + index * step)
-        .map((value: number) => `hsl(${this.hueValue}, 70%, ${Math.floor(value)}%`)
+        .map((value: number) => `hsl(${this.hueValue}, 70%, ${Math.floor(value)}%)`)
         .reverse();
     }
   }

@@ -14,7 +14,7 @@ export default class Snake {
   public snakeDirection: string = 'right';
   public userDirection: string = 'right';
   public unitSize: number = this.FIELD_SIZE / this.DIMENSION;
-  public loop: Loop = new Loop(this.main.bind(this));
+  public loop: Loop = new Loop(this.makeStep.bind(this));
 
   constructor() {
     this.unitSize = this.FIELD_SIZE / this.DIMENSION;
@@ -23,32 +23,27 @@ export default class Snake {
     document.addEventListener('keydown', keyboardListener.bind(this));
   }
 
-  public main(): void {
-    this.makeStep();
-  }
-
   public pushInitialUnits(): void {
     this.units = [];
-    Array(2).fill('').forEach(() => this.makeStep(true));
+    this.units.push(this.makeNewUnit);
+    this.units.push(this.makeNewUnit);
   }
 
-  public makeStep(initial?: boolean): void {
-    const newHead: Coords = this.makeNewUnit;
-    const selfIntersection: boolean = this.getAnyIntersection(newHead);
-    const carrotIntersection: boolean = this.getHeadIntersection(this.carrot);
+  public makeStep(): void {
+    const newUnit: Coords = this.makeNewUnit;
+    const selfIntersection: boolean = this.getAnyIntersection(newUnit);
+    const carrotIntersection: boolean = this.getHeadIntersection;
 
     if (selfIntersection) {
       this.reset();
     } else {
-      this.units.push(newHead);
-    }
-
-    if (!initial && !carrotIntersection) {
-      this.units.shift();
+      this.units.push(newUnit);
     }
 
     if (carrotIntersection) {
       this.addCarrot();
+    } else {
+      this.units.shift();
     }
   }
 
@@ -63,8 +58,11 @@ export default class Snake {
     return this.units.some((unit: Coords) => coords.x === unit.x && coords.y === unit.y);
   }
 
-  public getHeadIntersection(coords: Coords): boolean {
-    return this.getHead.x === coords.x && this.getHead.y === coords.y;
+  public get getHeadIntersection(): boolean {
+    const {x: headX, y: headY} = this.getHead;
+    const {x: carrotX, y: carrotY} = this.carrot;
+
+    return headX === carrotX && headY === carrotY;
   }
 
   public addCarrot(): void {
@@ -83,7 +81,7 @@ export default class Snake {
       if (tries > this.MAX_CALL_PER_CYCLE) {
         x = -this.unitSize * 2;
         y = -this.unitSize * 2;
-        setTimeout(() => this.addCarrot(), 0);
+        setTimeout(() => this.addCarrot());
         break;
       }
     }

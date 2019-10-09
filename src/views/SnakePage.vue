@@ -7,10 +7,18 @@
 
             {{snake.units.length}}
             <input type="range" min="0" max="360" step="1" v-model="hueValue"/>
-            <input type="range" min="0" max="400" step="1" value="150" @change="setSnakeTempo"/>
+            <input type="range" min="4" max="1000" step="1" value="150" @change="setSnakeTempo"/>
         </header>
 
         <main>
+            <div class="stat">
+                <div class="speed">
+                    Speed: {{Math.round((1000 / snake.tempo)*100) / 100}} steps/sec
+                </div>
+                <div class="count">
+                    Carrots: {{snake.units.length}}
+                </div>
+            </div>
             <SnakeView :snake="snake" :hueValue="hueValue"/>
         </main>
     </div>
@@ -71,9 +79,21 @@
 
         main {
             flex-grow: 1;
+            flex-direction: column;
             display: flex;
             align-items: center;
             justify-content: center;
+
+            .stat {
+                display: flex;
+                justify-content: space-between;
+                max-width: 480px;
+                width: 100%;
+                padding: 16px 32px;
+                box-sizing: border-box;
+                font-family: monospace;
+                color: #e8eaed;
+            }
         }
     }
 </style>
