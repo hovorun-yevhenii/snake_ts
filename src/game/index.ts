@@ -37,24 +37,20 @@ export default class Snake {
     const selfIntersection: boolean = this.getAnyIntersection(newUnit);
     const carrotIntersection: boolean = this.getHeadIntersection;
 
-    if (selfIntersection) {
-      this.reset();
-      return;
-    }
-
     if (!this.carrot.display) {
-      this.units.push(newUnit);
-      this.units.shift();
       this.carrot.display = true;
       this.addCarrot();
-      return;
     }
 
+    if (selfIntersection) {
+      return this.reset();
+    }
+
+    this.units.push(newUnit);
+
     if (carrotIntersection) {
-      this.units.push(newUnit);
       this.addCarrot();
     } else {
-      this.units.push(newUnit);
       this.units.shift();
     }
   }
