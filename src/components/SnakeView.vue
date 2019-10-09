@@ -19,6 +19,32 @@
                 16.379-6.249 22.627 0 6.249 6.248 6.249 16.379 0 22.627l-6.907 6.907 6.898.328c8.827.42 15.642
                 7.917 15.221 16.743-.408 8.568-7.483 15.24-15.969 15.24z"/>
             </symbol>
+
+            <symbol id="tail">
+                <transition appear name="unit">
+                    <rect style="transform-origin: center"
+                          :x="tailUnit.x"
+                          :key="`${tailUnit.x}-${tailUnit.y}`"
+                          :y="tailUnit.y"
+                          :stroke="strokeColor"
+                          :fill="colors[0]"
+                          :width="gridSize"
+                          :height="gridSize"></rect>
+                </transition>
+            </symbol>
+
+            <symbol id="head">
+                <transition appear name="unit">
+                    <rect style="transform-origin: center"
+                          :x="headUnit.x"
+                          :y="headUnit.y"
+                          :key="`${headUnit.x}-${headUnit.y}`"
+                          :stroke="strokeColor"
+                          :fill="colors[colors.length - 1]"
+                          :width="gridSize"
+                          :height="gridSize"></rect>
+                </transition>
+            </symbol>
         </defs>
 
         <use xlink:href="#carrot"
@@ -28,7 +54,7 @@
              :width="dimension * 2"
              :height="dimension * 2"/>
 
-        <transition-group tag="g" name="list" appear>
+        <transition-group tag="g" name="grid" appear>
             <line v-for="index in (dimension - 1)"
                   :key="`x${index}`"
                   :stroke-dasharray="strokeDasharray"
@@ -47,16 +73,19 @@
             </line>
         </transition-group>
 
-        <transition-group tag="g" name="list" appear>
-            <rect v-for="(unit, index) in units"
-                  :key="`x${unit.x}/y${unit.y}`"
-                  :x="unit.x"
-                  :y="unit.y"
-                  :stroke="strokeColor"
-                  :fill="colors[index]"
-                  :width="gridSize"
-                  :height="gridSize"></rect>
-        </transition-group>
+
+        <use xlink:href="#tail"></use>
+
+        <rect v-for="(unit, index) in body"
+              :key="`x${unit.x}/y${unit.y}`"
+              :x="unit.x"
+              :y="unit.y"
+              :stroke="strokeColor"
+              :fill="colors[index + 1]"
+              :width="gridSize"
+              :height="gridSize"></rect>
+
+        <use xlink:href="#head"></use>
     </svg>
 </template>
 
@@ -70,8 +99,8 @@
     @Prop() public snake!: Snake;
     @Prop({default: 90}) public hueValue!: number;
 
-    public get units(): Coords[] {
-      return this.snake.units;
+    public get body(): Coords[] {
+      return this.snake.units.slice(1, this.snake.units.length - 1);
     }
 
     public get carrot(): Coords {
@@ -94,6 +123,14 @@
       return this.snake.FIELD_SIZE;
     }
 
+    public get headUnit(): Coords {
+      return this.snake.getHead;
+    }
+
+    public get tailUnit(): Coords {
+      return this.snake.units[0];
+    }
+
     public get carrotColor(): string {
       return `hsl(${this.hueValue - 100}, 90%, 60%)`;
     }
@@ -107,7 +144,7 @@
     }
 
     public get colors(): string[] {
-      const {length} = this.units;
+      const length = this.body.length + 2;
       const step: number = 35 / (length - 1);
 
       return Array(length)
@@ -139,24 +176,32 @@
         }
     }
 
-    .list-enter-active,
-    .list-leave-active,
-    .list-move {
-        transition: 0s linear;
+    .grid-enter-active {
+        transform-origin: center;
+        transition: 1s;
     }
 
-    .list-enter {
+    .grid-enter {
         opacity: 0;
-        transform: scale(0.5);
     }
 
-    .list-enter-to {
-        opacity: 1;
-        transform: scale(1);
+    .head, .tail {
+        transform-origin: center;
     }
 
-    .list-leave-to {
+    .unit-enter-active,
+    .unit-leave-active {
+        transform-origin: center;
+        transition: 0s;
+    }
+
+    .unit-enter-to {
         opacity: 0;
-        transform: scale(0);
+        transform: scaleX(0);
+    }
+
+    .unit-leave-to {
+        opacity: 0;
+        transform: scaleX(0);
     }
 </style>

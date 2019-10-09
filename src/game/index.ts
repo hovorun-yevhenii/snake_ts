@@ -1,6 +1,6 @@
 import Loop from '@/game/loop';
 import {Coords} from '@/game/types';
-import {keyboardListener} from '@/game/keyboardListener';
+import keyboardListener from '@/game/keyboardListener';
 
 export default class Snake {
   public MAX_CALL_PER_CYCLE: number = 15999;
