@@ -48,6 +48,7 @@
         </defs>
 
         <use xlink:href="#carrot"
+             v-if="carrot.display"
              :fill="carrotColor"
              :x="carrot.x + carrotOffset"
              :y="carrot.y + carrotOffset"
@@ -92,7 +93,7 @@
 <script lang="ts">
   import {Component, Prop, Vue} from 'vue-property-decorator';
   import Snake from '@/game';
-  import {Coords} from '@/game/types';
+  import {Coords, Carrot} from '@/game/types';
 
   @Component({})
   export default class SnakeView extends Vue {
@@ -103,7 +104,7 @@
       return this.snake.units.slice(1, this.snake.units.length - 1);
     }
 
-    public get carrot(): Coords {
+    public get carrot(): Carrot {
       return this.snake.carrot;
     }
 
@@ -124,7 +125,7 @@
     }
 
     public get headUnit(): Coords {
-      return this.snake.getHead;
+      return this.snake.getHead();
     }
 
     public get tailUnit(): Coords {
