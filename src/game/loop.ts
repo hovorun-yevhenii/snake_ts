@@ -12,7 +12,6 @@ export default class Loop {
   constructor(options: LoopOptions) {
     this.callback = options.callback;
     this.interval = options.interval;
-    this.toggleLoop();
   }
 
   public toggleLoop(): void {
@@ -31,6 +30,8 @@ export default class Loop {
       this.lastTime = performance.now();
     }
 
-    this.frame = requestAnimationFrame(this.loop.bind(this));
+    if (this.frame) {
+      this.frame = requestAnimationFrame(this.loop.bind(this));
+    }
   }
 }

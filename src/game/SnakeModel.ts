@@ -20,6 +20,7 @@ export default class SnakeModel {
   }
 
   public pushInitialUnits(): void {
+    this.units = [];
     Array(10).fill('').forEach(() => this.makeStep(true));
   }
 
@@ -45,7 +46,6 @@ export default class SnakeModel {
     this.snakeDirection = 'right';
     this.userDirection = 'right';
     this.loop.toggleLoop();
-    this.units = [];
     this.pushInitialUnits();
   }
 
