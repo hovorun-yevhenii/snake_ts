@@ -18,10 +18,10 @@
         <main>
             <div class="stat">
                 <div class="speed">
-                    Speed: {{Math.round((1000 / snake.tempo)*100) / 100}} steps/sec
+                    Speed: {{Math.round((1000 / snake.tempo)*100) / 100}} steps/second
                 </div>
                 <div class="count">
-                    Carrots: {{snake.units.length}}
+                    Points: {{snake.units.length - 2}}
                 </div>
             </div>
             <SnakeView :snake="snake" :hueValue="hueValue"/>

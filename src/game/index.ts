@@ -6,7 +6,7 @@ export default class Snake {
   public MAX_CALL_PER_CYCLE: number = 15999;
   public FIELD_SIZE: number = 1000;
   public DIMENSION: number = 20;
-  public INITIAL_TEMPO: number = 100;
+  public INITIAL_TEMPO: number = 120;
 
   public tempo!: number;
   public unitSize: number = this.FIELD_SIZE / this.DIMENSION;
@@ -18,18 +18,19 @@ export default class Snake {
   public loop: Loop = new Loop(this.makeStep.bind(this));
 
   constructor() {
+    this.tempo = this.INITIAL_TEMPO;
+    this.loop.setInterval = this.tempo;
     this.unitSize = this.FIELD_SIZE / this.DIMENSION;
     this.addInitialUnits();
-    this.tempo = this.INITIAL_TEMPO;
     document.addEventListener('keydown', keyboardListener.bind(this));
   }
 
   public addInitialUnits(): void {
     this.units = [];
 
-    while (this.units.length < 3) {
-      this.units.push(this.makeNewUnit());
-    }
+    this.units.push(this.makeNewUnit());
+    this.units.push(this.makeNewUnit());
+    this.units.push(this.makeNewUnit());
   }
 
   public makeStep(): void {

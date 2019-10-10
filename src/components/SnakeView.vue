@@ -21,31 +21,44 @@
             </symbol>
 
             <symbol id="tail">
-                <transition appear name="unit">
-                    <rect style="transform-origin: center"
-                          :x="tailUnit.x"
+                    <rect :x="tailUnit.x"
                           :key="`${tailUnit.x}-${tailUnit.y}`"
                           :y="tailUnit.y"
                           :stroke="strokeColor"
                           :fill="colors[0]"
-                          :width="gridSize"
-                          :height="gridSize"></rect>
-                </transition>
+                          :width="unitSize"
+                          :height="unitSize"></rect>
             </symbol>
 
             <symbol id="head">
-                <transition appear name="unit">
-                    <rect style="transform-origin: center"
-                          :x="headUnit.x"
+                    <rect :x="headUnit.x"
                           :y="headUnit.y"
                           :key="`${headUnit.x}-${headUnit.y}`"
                           :stroke="strokeColor"
                           :fill="colors[colors.length - 1]"
-                          :width="gridSize"
-                          :height="gridSize"></rect>
-                </transition>
+                          :width="unitSize"
+                          :height="unitSize"></rect>
             </symbol>
         </defs>
+
+        <transition-group tag="g" name="grid" appear>
+            <line v-for="index in (dimension - 1)"
+                  :key="`x${index}`"
+                  :stroke-dasharray="strokeDasharray"
+                  :stroke-dashoffset="dimension"
+                  :x1="unitSize * index"
+                  :x2="unitSize * index"
+                  :y2="fieldSize">
+            </line>
+            <line v-for="index in (dimension - 1)"
+                  :key="`y${index}`"
+                  :stroke-dasharray="strokeDasharray"
+                  :stroke-dashoffset="dimension"
+                  :y1="unitSize * index"
+                  :y2="unitSize * index"
+                  :x2="fieldSize">
+            </line>
+        </transition-group>
 
         <use xlink:href="#carrot"
              v-if="carrot.display"
@@ -54,25 +67,6 @@
              :y="carrot.y + carrotOffset"
              :width="dimension * 2"
              :height="dimension * 2"/>
-
-        <transition-group tag="g" name="grid" appear>
-            <line v-for="index in (dimension - 1)"
-                  :key="`x${index}`"
-                  :stroke-dasharray="strokeDasharray"
-                  :stroke-dashoffset="dimension"
-                  :x1="gridSize * index"
-                  :x2="gridSize * index"
-                  :y2="fieldSize">
-            </line>
-            <line v-for="index in (dimension - 1)"
-                  :key="`y${index}`"
-                  :stroke-dasharray="strokeDasharray"
-                  :stroke-dashoffset="dimension"
-                  :y1="gridSize * index"
-                  :y2="gridSize * index"
-                  :x2="fieldSize">
-            </line>
-        </transition-group>
 
 
         <use xlink:href="#tail"></use>
@@ -83,8 +77,8 @@
               :y="unit.y"
               :stroke="strokeColor"
               :fill="colors[index + 1]"
-              :width="gridSize"
-              :height="gridSize"></rect>
+              :width="unitSize"
+              :height="unitSize"></rect>
 
         <use xlink:href="#head"></use>
     </svg>
@@ -112,8 +106,8 @@
       return this.snake.DIMENSION;
     }
 
-    public get gridSize(): number {
-      return this.fieldSize / this.dimension;
+    public get unitSize(): number {
+      return this.snake.unitSize;
     }
 
     public get carrotOffset(): number {
@@ -161,8 +155,14 @@
     svg {
         max-width: 480px;
 
+        & * {
+            transform-box: fill-box;
+        }
+
         line {
             stroke: #000;
+            transform-origin: center;
+            transition: 1s;
         }
 
         .carrot {
@@ -177,32 +177,8 @@
         }
     }
 
-    .grid-enter-active {
-        transform-origin: center;
-        transition: 1s;
-    }
-
     .grid-enter {
+        transform: scale(0) rotate(-2turn);
         opacity: 0;
-    }
-
-    .head, .tail {
-        transform-origin: center;
-    }
-
-    .unit-enter-active,
-    .unit-leave-active {
-        transform-origin: center;
-        transition: 0s;
-    }
-
-    .unit-enter-to {
-        opacity: 0;
-        transform: scaleX(0);
-    }
-
-    .unit-leave-to {
-        opacity: 0;
-        transform: scaleX(0);
     }
 </style>
