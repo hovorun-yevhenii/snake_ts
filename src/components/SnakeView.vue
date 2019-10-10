@@ -21,44 +21,42 @@
             </symbol>
 
             <symbol id="tail">
-                    <rect :x="tailUnit.x"
-                          :key="`${tailUnit.x}-${tailUnit.y}`"
-                          :y="tailUnit.y"
-                          :stroke="strokeColor"
-                          :fill="colors[0]"
-                          :width="unitSize"
-                          :height="unitSize"></rect>
+                <rect :x="tailUnit.x"
+                      :key="`${tailUnit.x}-${tailUnit.y}`"
+                      :y="tailUnit.y"
+                      :stroke="strokeColor"
+                      :fill="colors[0]"
+                      :width="unitSize"
+                      :height="unitSize"></rect>
             </symbol>
 
             <symbol id="head">
-                    <rect :x="headUnit.x"
-                          :y="headUnit.y"
-                          :key="`${headUnit.x}-${headUnit.y}`"
-                          :stroke="strokeColor"
-                          :fill="colors[colors.length - 1]"
-                          :width="unitSize"
-                          :height="unitSize"></rect>
+                <rect :x="headUnit.x"
+                      :y="headUnit.y"
+                      :key="`${headUnit.x}-${headUnit.y}`"
+                      :stroke="strokeColor"
+                      :fill="colors[colors.length - 1]"
+                      :width="unitSize"
+                      :height="unitSize"></rect>
             </symbol>
         </defs>
 
-        <transition-group tag="g" name="grid" appear>
-            <line v-for="index in (dimension - 1)"
-                  :key="`x${index}`"
-                  :stroke-dasharray="strokeDasharray"
-                  :stroke-dashoffset="dimension"
-                  :x1="unitSize * index"
-                  :x2="unitSize * index"
-                  :y2="fieldSize">
-            </line>
-            <line v-for="index in (dimension - 1)"
-                  :key="`y${index}`"
-                  :stroke-dasharray="strokeDasharray"
-                  :stroke-dashoffset="dimension"
-                  :y1="unitSize * index"
-                  :y2="unitSize * index"
-                  :x2="fieldSize">
-            </line>
-        </transition-group>
+        <line v-for="index in (dimension - 1)"
+              :key="`x${index}`"
+              :stroke-dasharray="strokeDasharray"
+              :stroke-dashoffset="dimension"
+              :x1="unitSize * index"
+              :x2="unitSize * index"
+              :y2="fieldSize">
+        </line>
+        <line v-for="index in (dimension - 1)"
+              :key="`y${index}`"
+              :stroke-dasharray="strokeDasharray"
+              :stroke-dashoffset="dimension"
+              :y1="unitSize * index"
+              :y2="unitSize * index"
+              :x2="fieldSize">
+        </line>
 
         <use xlink:href="#carrot"
              v-if="carrot.display"
@@ -161,8 +159,6 @@
 
         line {
             stroke: #000;
-            transform-origin: center;
-            transition: 1s;
         }
 
         .carrot {
@@ -175,10 +171,5 @@
         to {
             transform: scale(.7);
         }
-    }
-
-    .grid-enter {
-        transform: scale(0) rotate(-2turn);
-        opacity: 0;
     }
 </style>

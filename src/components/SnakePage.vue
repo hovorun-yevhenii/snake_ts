@@ -1,14 +1,11 @@
 <template>
     <div class="game">
         <header>
-            <router-link class="icon-link" to="/">
-                <i class="fas fa-arrow-circle-left"></i>
-            </router-link>
-
             <label>
                 Color HUE
                 <input type="range" min="0" max="360" step="1" v-model="hueValue"/>
             </label>
+            <p class="intro">press 'SPACE' (start/pause)</p>
             <label>
                 Snake Speed
                 <input type="range" min="4" max="1000" step="1" value="150" @change="setSnakeTempo"/>
@@ -54,23 +51,19 @@
         color: #5F6368;
         display: flex;
         flex-direction: column;
+        font-family: monospace;
 
         header {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-around;
             align-items: center;
             padding: 16px;
             border-bottom: 1px solid #5f6368;
 
-            .icon-link {
-                font-size: 32px;
-                color: #5f6368;
-                opacity: .7;
-                transition: .2s;
-
-                &:hover {
-                    opacity: 1;
-                }
+            .intro {
+                padding: 8px;
+                text-align: center;
             }
 
             label {
@@ -103,7 +96,6 @@
                 width: 100%;
                 padding: 16px 32px;
                 box-sizing: border-box;
-                font-family: monospace;
             }
         }
     }
